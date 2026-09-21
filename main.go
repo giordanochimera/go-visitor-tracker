@@ -27,35 +27,42 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
-		// Recupera l'IP reale del visitatore
 		xff := r.Header.Get("X-Forwarded-For")
+
+		ip := r.RemoteAddr
+
 		if xff != "" {
 			ip = strings.TrimSpace(strings.Split(xff, ",")[0])
-			}
-		ip := r.RemoteAddr
+		}
+
 		timezone := r.URL.Query().Get("tz")
+
 		currentTime := time.Now()
-		if timezone != "" {location, err := time.LoadLocation(timezone)
+
+		if timezone != "" {
+			location, err := time.LoadLocation(timezone)
+
 			if err == nil {
 				currentTime = currentTime.In(location)
 			}
 		}
-		fmt.Fprintf(w,"Ora locale: %s\n",currentTime.Format("2006-01-02 15:04:05 MST"),)
+
 		visit := Visit{
-					IP:        ip,
-					Referrer:  r.Referer(),
-					UserAgent: r.UserAgent(),
-					Time:      time.Now().Format("2006-01-02 15:04:05"),
-					Timezone:  timezone,
+			IP:        ip,
+			Referrer:  r.Referer(),
+			UserAgent: r.UserAgent(),
+			Time:      currentTime.Format("2006-01-02 15:04:05 MST"),
+			Timezone:  timezone,
 		}
 
 		fmt.Fprintln(w, "Ciao da Gio Go!")
 		fmt.Fprintln(w)
+
 		fmt.Fprintf(w, "Tracker per %s\n\n", fromSite)
 		fmt.Fprintf(w, "IP visitatore: %s\n", visit.IP)
 		fmt.Fprintf(w, "Referrer: %s\n", visit.Referrer)
 		fmt.Fprintf(w, "Browser: %s\n", visit.UserAgent)
-		fmt.Fprintf(w, "Ora: %s\n", visit.Time)
+		fmt.Fprintf(w, "Ora locale: %s\n", visit.Time)
 		fmt.Fprintf(w, "Timezone: %s\n", visit.Timezone)
 	})
 
