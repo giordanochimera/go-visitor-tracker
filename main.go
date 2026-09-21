@@ -15,6 +15,7 @@ type Visit struct {
 	Referrer  string
 	UserAgent string
 	Time      string
+	Timezone  string
 }
 
 func main() {
@@ -28,25 +29,22 @@ func main() {
 
 		// Recupera l'IP reale del visitatore
 		xff := r.Header.Get("X-Forwarded-For")
-
 		ip := r.RemoteAddr
-
+		timezone := r.URL.Query().Get("tz")
 		if xff != "" {
 			ip = strings.TrimSpace(strings.Split(xff, ",")[0])
 		}
-
 		visit := Visit{
-			IP:        ip,
-			Referrer:  r.Referer(),
-			UserAgent: r.UserAgent(),
-			Time:      time.Now().Format("2006-01-02 15:04:05"),
+					IP:        ip,
+					Referrer:  r.Referer(),
+					UserAgent: r.UserAgent(),
+					Time:      time.Now().Format("2006-01-02 15:04:05"),
+					Timezone:  timezone,
 		}
 
 		fmt.Fprintln(w, "Ciao da Gio Go!")
 		fmt.Fprintln(w)
-
 		fmt.Fprintf(w, "Tracker per %s\n\n", fromSite)
-
 		fmt.Fprintf(w, "IP visitatore: %s\n", visit.IP)
 		fmt.Fprintf(w, "Referrer: %s\n", visit.Referrer)
 		fmt.Fprintf(w, "Browser: %s\n", visit.UserAgent)
