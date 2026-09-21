@@ -14,7 +14,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Ciao dal tracker Go!")
+		fmt.Fprintln(w, "Ciao da Gio Go!")
 	})
 
 	http.ListenAndServe(":"+port, nil)
