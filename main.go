@@ -49,6 +49,7 @@ func main() {
 		fmt.Fprintf(w, "Referrer: %s\n", visit.Referrer)
 		fmt.Fprintf(w, "Browser: %s\n", visit.UserAgent)
 		fmt.Fprintf(w, "Ora: %s\n", visit.Time)
+		fmt.Fprintf(w, "Timezone: %s\n", visit.Timezone)
 	})
 
 	fmt.Printf("Server avviato sulla porta %s\n", port)
