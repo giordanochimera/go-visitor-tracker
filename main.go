@@ -29,11 +29,18 @@ func main() {
 
 		// Recupera l'IP reale del visitatore
 		xff := r.Header.Get("X-Forwarded-For")
-		ip := r.RemoteAddr
-		timezone := r.URL.Query().Get("tz")
 		if xff != "" {
 			ip = strings.TrimSpace(strings.Split(xff, ",")[0])
+			}
+		ip := r.RemoteAddr
+		timezone := r.URL.Query().Get("tz")
+		currentTime := time.Now()
+		if timezone != "" {location, err := time.LoadLocation(timezone)
+			if err == nil {
+				currentTime = currentTime.In(location)
+			}
 		}
+		fmt.Fprintf(w,"Ora locale: %s\n",currentTime.Format("2006-01-02 15:04:05 MST"),)
 		visit := Visit{
 					IP:        ip,
 					Referrer:  r.Referer(),
