@@ -23,6 +23,7 @@ type Visit struct {
 	City      string
 	Region    string
 	Country   string
+	Path      string
 }
 
 type GeoInfo struct {
@@ -99,18 +100,22 @@ func main() {
 			City:      geo.City,
 			Region:    geo.Region,
 			Country:   geo.Country,
+			Path:      r.URL.Path
 		}
 		_, err = db.Exec(
 		`INSERT INTO visits (
-			visit_time,
-			ip,
-			country,
-			region,
-			city,
-			timezone,
-			browser,
-			referrer
+		    visit_time,
+		    ip,
+		    country,
+		    region,
+		    city,
+		    timezone,
+		    browser,
+		    referrer,
+		    path
 		)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 		visit.Time,
 		visit.IP,
@@ -120,6 +125,7 @@ func main() {
 		visit.Timezone,
 		visit.UserAgent,
 		visit.Referrer,
+		visit.Path,
 	)
 	
 	if err != nil {
@@ -138,6 +144,7 @@ func main() {
 		fmt.Fprintf(w, "Browser: %s\n", visit.UserAgent)
 		fmt.Fprintf(w, "Ora locale: %s\n", visit.Time)
 		fmt.Fprintf(w, "Timezone: %s\n", visit.Timezone)
+		fmt.Fprintf(w, "Path: %s\n", visit.Path)
 	})
 
 	fmt.Printf("Server avviato sulla porta %s\n", port)
