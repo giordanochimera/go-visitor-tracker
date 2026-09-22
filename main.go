@@ -158,7 +158,7 @@ func main() {
 	/*eseguo le due funzioni per scrivere sul browser e sul db*/
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/track", trackHandler)
-
+	/*Scrivo nei log del server*/
 	fmt.Printf("Server avviato sulla porta %s\n", port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		fmt.Println(err)
