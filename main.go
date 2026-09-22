@@ -145,6 +145,8 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 		fmt.Fprintf(w, "Ora locale: %s\n", visit.Time)
 		fmt.Fprintf(w, "Timezone: %s\n", visit.Timezone)
 		fmt.Fprintf(w, "Path: %s\n", visit.Path)
+		fmt.Fprintf(w, "DB URL: %s\n", dbURL)
+		fmt.Fprintf(w, "Token presente: %t\n", authToken != "")
 	})
 
 	fmt.Printf("Server avviato sulla porta %s\n", port)
