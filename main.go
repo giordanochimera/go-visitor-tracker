@@ -21,6 +21,17 @@ type Visit struct {
 	Region    string
 	Country   string
 }
+func getGeoInfo(ip string) GeoInfo {
+	var geo GeoInfo
+	url := "http://ip-api.com/json/" + ip
+	resp, err := http.Get(url)
+	if err != nil {
+		return geo
+	}
+	defer resp.Body.Close()
+	json.NewDecoder(resp.Body).Decode(&geo)
+	return geo
+}
 
 func main() {
 
@@ -32,19 +43,6 @@ func main() {
 	City    string `json:"city"`
 	Region  string `json:"regionName"`
 	Country string `json:"country"`
-	}
-	func getGeoInfo(ip string) GeoInfo {
-		var geo GeoInfo
-		url := "http://ip-api.com/json/" + ip
-		resp, err := http.Get(url)
-		if err != nil {
-			return geo
-		}
-		defer resp.Body.Close()
-
-		json.NewDecoder(resp.Body).Decode(&geo)
-
-		return geo
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
