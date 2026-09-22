@@ -21,15 +21,26 @@ type Visit struct {
 	Region    string
 	Country   string
 }
+
+type GeoInfo struct {
+	City    string `json:"city"`
+	Region  string `json:"regionName"`
+	Country string `json:"country"`
+}
+
 func getGeoInfo(ip string) GeoInfo {
 	var geo GeoInfo
+
 	url := "http://ip-api.com/json/" + ip
+
 	resp, err := http.Get(url)
 	if err != nil {
 		return geo
 	}
 	defer resp.Body.Close()
+
 	json.NewDecoder(resp.Body).Decode(&geo)
+
 	return geo
 }
 
@@ -38,11 +49,6 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
-	}
-	type GeoInfo struct {
-	City    string `json:"city"`
-	Region  string `json:"regionName"`
-	Country string `json:"country"`
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +62,6 @@ func main() {
 		}
 
 		timezone := r.URL.Query().Get("tz")
-		geo := getGeoInfo(ip)
 
 		currentTime := time.Now()
 
@@ -67,6 +72,9 @@ func main() {
 				currentTime = currentTime.In(location)
 			}
 		}
+
+		geo := getGeoInfo(ip)
+
 		visit := Visit{
 			IP:        ip,
 			Referrer:  r.Referer(),
@@ -83,13 +91,13 @@ func main() {
 
 		fmt.Fprintf(w, "Tracker per %s\n\n", fromSite)
 		fmt.Fprintf(w, "IP visitatore: %s\n", visit.IP)
+		fmt.Fprintf(w, "Country: %s\n", visit.Country)
+		fmt.Fprintf(w, "Region: %s\n", visit.Region)
+		fmt.Fprintf(w, "City: %s\n", visit.City)
 		fmt.Fprintf(w, "Referrer: %s\n", visit.Referrer)
 		fmt.Fprintf(w, "Browser: %s\n", visit.UserAgent)
 		fmt.Fprintf(w, "Ora locale: %s\n", visit.Time)
 		fmt.Fprintf(w, "Timezone: %s\n", visit.Timezone)
-		fmt.Fprintf(w, "Country: %s\n", visit.Country)
-		fmt.Fprintf(w, "Region: %s\n", visit.Region)
-		fmt.Fprintf(w, "City: %s\n", visit.City)
 	})
 
 	fmt.Printf("Server avviato sulla porta %s\n", port)
