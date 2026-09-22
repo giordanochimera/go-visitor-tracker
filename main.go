@@ -142,8 +142,7 @@ func main() {
 
 	fmt.Printf("Server avviato sulla porta %s\n", port)
 
-	err := http.ListenAndServe(":"+port, nil)
-	if err != nil {
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		fmt.Println(err)
 	}
 }
