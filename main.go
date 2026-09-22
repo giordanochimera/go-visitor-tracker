@@ -91,48 +91,48 @@ func main() {
 
 		geo := getGeoInfo(ip)
 
-		visit := Visit{
-			IP:        ip,
-			Referrer:  r.Referer(),
-			UserAgent: r.UserAgent(),
-			Time:      currentTime.Format("2006-01-02 15:04:05 MST"),
-			Timezone:  timezone,
-			City:      geo.City,
-			Region:    geo.Region,
-			Country:   geo.Country,
-			Path:      r.URL.Path,
-		}
-		_, err = result, err := db.Exec(
-	`INSERT INTO visits (
-		visit_time,
-		ip,
-		country,
-		region,
-		city,
-		timezone,
-		browser,
-		referrer,
-		path
-	)
-	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-	visit.Time,
-	visit.IP,
-	visit.Country,
-	visit.Region,
-	visit.City,
-	visit.Timezone,
-	visit.UserAgent,
-	visit.Referrer,
-	visit.Path,
+visit := Visit{
+    IP:        ip,
+    Referrer:  r.Referer(),
+    UserAgent: r.UserAgent(),
+    Time:      currentTime.Format("2006-01-02 15:04:05 MST"),
+    Timezone:  timezone,
+    City:      geo.City,
+    Region:    geo.Region,
+    Country:   geo.Country,
+    Path:      r.URL.Path,
+}
+
+result, err := db.Exec(
+    `INSERT INTO visits (
+        visit_time,
+        ip,
+        country,
+        region,
+        city,
+        timezone,
+        browser,
+        referrer,
+        path
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    visit.Time,
+    visit.IP,
+    visit.Country,
+    visit.Region,
+    visit.City,
+    visit.Timezone,
+    visit.UserAgent,
+    visit.Referrer,
+    visit.Path,
 )
 
 if err != nil {
-	fmt.Fprintf(w, "\nDB ERROR: %v\n", err)
-	return
+    fmt.Fprintf(w, "DB ERROR: %v\n", err)
+    return
 }
 
 id, _ := result.LastInsertId()
-fmt.Fprintf(w, "\nINSERT OK - ID %d\n", id)
+fmt.Fprintf(w, "INSERT OK ID=%d\n", id)
 	
 	if err != nil {
 		fmt.Printf("Errore insert: %v\n", err)
