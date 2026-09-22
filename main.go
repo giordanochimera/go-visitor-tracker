@@ -100,7 +100,7 @@ func main() {
 			City:      geo.City,
 			Region:    geo.Region,
 			Country:   geo.Country,
-			Path:      r.URL.Path
+			Path:      r.URL.Path,
 		}
 		_, err = db.Exec(
 		`INSERT INTO visits (
