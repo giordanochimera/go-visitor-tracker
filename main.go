@@ -7,6 +7,9 @@ import (
 	"os"
 	"strings"
 	"time"
+	"database/sql"
+	
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 const fromSite = "https://glsse.jimdofree.com"
@@ -45,7 +48,19 @@ func getGeoInfo(ip string) GeoInfo {
 }
 
 func main() {
-
+	dbURL := os.Getenv("TURSO_URL")
+	authToken := os.Getenv("TURSO_AUTH_TOKEN")
+	
+	db, err := sql.Open(
+		"libsql",
+		dbURL+"?authToken="+authToken,
+	)
+	
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -85,6 +100,31 @@ func main() {
 			Region:    geo.Region,
 			Country:   geo.Country,
 		}
+		_, err = db.Exec(
+		`INSERT INTO visits (
+			visit_time,
+			ip,
+			country,
+			region,
+			city,
+			timezone,
+			browser,
+			referrer
+		)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		visit.Time,
+		visit.IP,
+		visit.Country,
+		visit.Region,
+		visit.City,
+		visit.Timezone,
+		visit.UserAgent,
+		visit.Referrer,
+	)
+	
+	if err != nil {
+		fmt.Printf("Errore insert: %v\n", err)
+	}
 
 		fmt.Fprintln(w, "Ciao da Gio Go!")
 		fmt.Fprintln(w)
