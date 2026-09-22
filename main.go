@@ -42,14 +42,14 @@ func getGeoInfo(ip string) GeoInfo {
 	json.NewDecoder(resp.Body).Decode(&geo)
 	return geo
 }
-#funzione per scrivere messaggi sul browser
+/*funzione per scrivere messaggi sul browser*/
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Gio Visitor Tracker")
 	fmt.Fprintln(w, "")
 	fmt.Fprintln(w, "Tracking endpoint:")
 	fmt.Fprintln(w, "/track")
 }
-#funzione per leggere la richiesta e recuperare l'IP, geolocalizzare, salvare su DB e restituire un messaggio di conferma*/
+/*funzione per leggere la richiesta e recuperare l'IP, geolocalizzare, salvare su DB e restituire un messaggio di conferma*/
 func trackHandler(w http.ResponseWriter, r *http.Request) {
 	/*recupero Header HTTP*/
 	xff := r.Header.Get("X-Forwarded-For")
@@ -58,7 +58,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 	if xff != "" {
 		ip = strings.TrimSpace(strings.Split(xff, ",")[0])
 	}
-	#recupero la timezone se presente nell'URL della richiesta*/
+	/*recupero la timezone se presente nell'URL della richiesta*/
 	timezone := r.URL.Query().Get("tz")
 	currentTime := time.Now()
 	if timezone != "" {
