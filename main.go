@@ -21,7 +21,6 @@ type Visit struct {
 	City      string
 	Region    string
 	Country   string
-	Path      string
 	DeviceType string
 }
 /*struct che rappresenta una singola location*/
@@ -81,7 +80,6 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 		City:      geo.City,
 		Region:    geo.Region,
 		Country:   geo.Country,
-		Path:      r.URL.Path,
 		DeviceType: deviceType,
 	}
 
@@ -110,7 +108,6 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			timezone,
 			browser,
 			referrer,
-			path,
 			device_type
 		)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
@@ -122,7 +119,6 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 		visit.Timezone,
 		visit.UserAgent,
 		visit.Referrer,
-		visit.Path,
 		visit.DeviceType,
 	)
 	if err != nil {
@@ -138,7 +134,6 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Region: %s\n", visit.Region)
 	fmt.Fprintf(w, "City: %s\n", visit.City)
 	fmt.Fprintf(w, "Timezone: %s\n", visit.Timezone)
-	fmt.Fprintf(w, "Path: %s\n", visit.Path)
 	fmt.Fprintf(w, "Device: %s\n", visit.DeviceType)
 }
 /*funzione per distinguere il tipo di dispositivo*/
