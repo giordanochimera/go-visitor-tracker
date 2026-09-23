@@ -110,7 +110,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			referrer,
 			device_type
 		)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		visit.Time,
 		visit.IP,
 		visit.Country,
