@@ -22,6 +22,7 @@ type Visit struct {
 	Region    string
 	Country   string
 	Path      string
+	DeviceType string
 }
 /*struct che rappresenta una singola location*/
 type GeoInfo struct {
@@ -69,6 +70,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	/*recupero la location da IP con la funzione getGeoInfo*/
 	geo := getGeoInfo(ip)
+	deviceType := getDeviceType(r.UserAgent())
     /*recupero info della singola visita*/
 	visit := Visit{
 		IP:        ip,
@@ -80,6 +82,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 		Region:    geo.Region,
 		Country:   geo.Country,
 		Path:      r.URL.Path,
+		DeviceType: deviceType,
 	}
 
 	// Anti-doppione entro 5 secondi
@@ -107,9 +110,10 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			timezone,
 			browser,
 			referrer,
-			path
+			path,
+			device_type
 		)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
 		visit.Time,
 		visit.IP,
 		visit.Country,
@@ -119,6 +123,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 		visit.UserAgent,
 		visit.Referrer,
 		visit.Path,
+		visit.DeviceType,
 	)
 	if err != nil {
 		fmt.Fprintf(w, "DB ERROR: %v\n", err)
@@ -134,6 +139,48 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "City: %s\n", visit.City)
 	fmt.Fprintf(w, "Timezone: %s\n", visit.Timezone)
 	fmt.Fprintf(w, "Path: %s\n", visit.Path)
+	fmt.Fprintf(w, "Device: %s\n", visit.DeviceType)
+}
+/*funzione per distinguere il tipo di dispositivo*/
+func getDeviceType(userAgent string) string {
+	ua := strings.ToLower(userAgent)
+	// Bot
+	if strings.Contains(ua, "bot") ||
+		strings.Contains(ua, "crawler") ||
+		strings.Contains(ua, "spider") ||
+		strings.Contains(ua, "google") {
+		return "Bot"
+	}
+	// Tablet
+	if strings.Contains(ua, "ipad") ||
+		strings.Contains(ua, "tablet") {
+		return "Tablet"
+	}
+	// Smartphone
+	if strings.Contains(ua, "iphone") ||
+		strings.Contains(ua, "android") ||
+		strings.Contains(ua, "mobile") {
+		return "Smartphone"
+	}
+	// Smart TV
+	if strings.Contains(ua, "smart-tv") ||
+		strings.Contains(ua, "hbbtv") ||
+		strings.Contains(ua, "tv") {
+		return "TV"
+	}
+	// Console
+	if strings.Contains(ua, "playstation") ||
+		strings.Contains(ua, "xbox") ||
+		strings.Contains(ua, "nintendo") {
+		return "Console"
+	}
+	// Desktop
+	if strings.Contains(ua, "windows") ||
+		strings.Contains(ua, "macintosh") ||
+		strings.Contains(ua, "linux") {
+		return "Desktop"
+	}
+	return "Unknown"
 }
 
 func main() {
