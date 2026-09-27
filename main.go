@@ -232,21 +232,94 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 		deviceValues = append(deviceValues, count)
 	}
 
-	//countryLabelsJSON, _ := json.Marshal(countryLabels)
-	//countryValuesJSON, _ := json.Marshal(countryValues)
+	countryLabelsJSON, _ := json.Marshal(countryLabels)
+	countryValuesJSON, _ := json.Marshal(countryValues)
 
-	//deviceLabelsJSON, _ := json.Marshal(deviceLabels)
-	//deviceValuesJSON, _ := json.Marshal(deviceValues)
+	deviceLabelsJSON, _ := json.Marshal(deviceLabels)
+	deviceValuesJSON, _ := json.Marshal(deviceValues)
 
 	fmt.Fprintf(w, `
-<script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Site Views</title>
 
-console.log("CHART =", typeof Chart);
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-</script>
-`)
+<style>
+body {
+	font-family: Arial, sans-serif;
+	margin: 20px;
 }
 
+.chart-container {
+	width: 600px;
+	height: 400px;
+	margin-bottom: 50px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Site Views</h1>
+
+<div class="chart-container">
+	<h2>Visite per Paese</h2>
+	<canvas id="countryChart"></canvas>
+</div>
+
+<div class="chart-container">
+	<h2>Visite per Dispositivo</h2>
+	<canvas id="deviceChart"></canvas>
+</div>
+
+<script>
+
+const countryLabels = %s;
+const countryValues = %s;
+
+const deviceLabels = %s;
+const deviceValues = %s;
+
+new Chart(
+	document.getElementById('countryChart'),
+	{
+		type: 'pie',
+		data: {
+			labels: countryLabels,
+			datasets: [{
+				data: countryValues
+			}]
+		}
+	}
+);
+
+new Chart(
+	document.getElementById('deviceChart'),
+	{
+		type: 'pie',
+		data: {
+			labels: deviceLabels,
+			datasets: [{
+				data: deviceValues
+			}]
+		}
+	}
+);
+
+</script>
+
+</body>
+</html>
+`,
+		string(countryLabelsJSON),
+		string(countryValuesJSON),
+		string(deviceLabelsJSON),
+		string(deviceValuesJSON),
+	)
+}
 func main() {
 	/*capisco su quale porta deve mettersi in ascolto il server Go*/
 	port := os.Getenv("PORT")
