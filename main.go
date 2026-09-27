@@ -185,6 +185,7 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 <html>
 <head>
 <title>Site Views</title>
+<script src="https://cdn.jsdelivr.net/npmpt>
 </head>
 <body>
 <h1>Site Views</h1>
@@ -237,27 +238,47 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 
 		var device string
 		var count int
-
 		rows2.Scan(&device, &count)
-
 		deviceLabels = append(deviceLabels, device)
 		deviceValues = append(deviceValues, count)
 	}
-
-	// Debug temporaneo
-
-	fmt.Fprintln(w, "<h2>Country Labels</h2>")
-	fmt.Fprintf(w, "<pre>%v</pre>", countryLabels)
-
-	fmt.Fprintln(w, "<h2>Country Values</h2>")
-	fmt.Fprintf(w, "<pre>%v</pre>", countryValues)
-
-	fmt.Fprintln(w, "<h2>Device Labels</h2>")
-	fmt.Fprintf(w, "<pre>%v</pre>", deviceLabels)
-
-	fmt.Fprintln(w, "<h2>Device Values</h2>")
-	fmt.Fprintf(w, "<pre>%v</pre>", deviceValues)
-
+	countryLabelsJSON, _ := json.Marshal(countryLabels)
+	countryValuesJSON, _ := json.Marshal(countryValues)
+	deviceLabelsJSON, _ := json.Marshal(deviceLabels)
+	deviceValuesJSON, _ := json.Marshal(deviceValues
+	fmt.Fprintf(w, `
+	<script>
+	new Chart(
+		document.getElementById('countryChart'),
+		{
+			type: 'pie',
+			data: {
+				labels: %s,
+				datasets: [{
+					data: %s
+				}]
+			}
+		}
+	);
+	new Chart(
+		document.getElementById('deviceChart'),
+		{
+			type: 'pie',
+			data: {
+				labels: %s,
+				datasets: [{
+					data: %s
+				}]
+			}
+		}
+	);
+	</script>
+	`,
+		string(countryLabelsJSON),
+		string(countryValuesJSON),
+		string(deviceLabelsJSON),
+		string(deviceValuesJSON),
+	)
 	fmt.Fprintln(w, `
 </body>
 </html>
