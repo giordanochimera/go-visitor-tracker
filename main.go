@@ -242,7 +242,7 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 <html>
 <head>
 	<title>Site Views</title>
-	https://cdn.jsdelivr.net/npm/chart.jsscript>
+	<script src="sdelivr.net/npm/chart.jsscript>
 </head>
 <body>
 
