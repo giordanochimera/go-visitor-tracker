@@ -241,7 +241,7 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `
 <script>
 
-alert("TEST");
+console.log("CHART =", typeof Chart);
 
 </script>
 `)
