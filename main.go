@@ -177,6 +177,7 @@ func getDeviceType(userAgent string) string {
 	}
 	return "Unknown"
 }
+/*funzione per lapagina di statistiche del sito*/
 func adminHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.Query(`
 		SELECT country, COUNT(*)
@@ -197,6 +198,28 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 		var count int
 		rows.Scan(&country, &count)
 		fmt.Fprintf(w, "%s : %d\n", country, count)
+	}
+	fmt.Fprintln(w)
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "VISITE PER DISPOSITIVO")
+	fmt.Fprintln(w)
+	
+	rows2, err := db.Query(`
+		SELECT device_type, COUNT(*)
+		FROM visits
+		GROUP BY device_type
+		ORDER BY COUNT(*) DESC
+	`)
+	if err != nil {
+		fmt.Fprintf(w, "Errore: %v", err)
+		return
+	}
+	defer rows2.Close()
+	for rows2.Next() {
+		var device string
+		var count int
+		rows2.Scan(&device, &count)
+		fmt.Fprintf(w, "%s : %d\n", device, count)
 	}
 }
 
