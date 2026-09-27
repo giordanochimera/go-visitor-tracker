@@ -249,19 +249,6 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 
 <style>
 body {
-	font-family: Arial, sans-serif;
-	margin: 20px;
-}
-
-.chart-container {
-	width: 600px;
-	height: 400px;
-	margin-bottom: 50px;
-}
-</style>
-
-</head>
-body {
     font-family: Arial, sans-serif;
     margin: 20px;
     text-align: center;
@@ -270,14 +257,13 @@ body {
     width: 500px;
     margin: auto;
 }
-
+</style>
+</head>
 <h1>Site Views</h1>
-
 <div class="chart-container">
 	<h2>Visite per Paese</h2>
 	<canvas id="countryChart"></canvas>
 </div>
-
 <div class="chart-container">
 	<h2>Visite per Dispositivo</h2>
 	<canvas id="deviceChart"></canvas>
