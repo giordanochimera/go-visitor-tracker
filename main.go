@@ -177,6 +177,28 @@ func getDeviceType(userAgent string) string {
 	}
 	return "Unknown"
 }
+func adminHandler(w http.ResponseWriter, r *http.Request) {
+	rows, err := db.Query(`
+		SELECT country, COUNT(*)
+		FROM visits
+		GROUP BY country
+		ORDER BY COUNT(*) DESC
+	`)
+	if err != nil {
+		fmt.Fprintf(w, "Errore: %v", err)
+		return
+	}
+	defer rows.Close()
+	fmt.Fprintln(w, "VISITE PER PAESE")
+	fmt.Fprintln(w)
+
+	for rows.Next() {
+		var country string
+		var count int
+		rows.Scan(&country, &count)
+		fmt.Fprintf(w, "%s : %d\n", country, count)
+	}
+}
 
 func main() {
 	/*capisco su quale porta deve mettersi in ascolto il server Go*/
@@ -200,6 +222,7 @@ func main() {
 	/*eseguo le due funzioni per scrivere sul browser e sul db*/
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/track", trackHandler)
+	http.HandleFunc("/admin", adminHandler)
 	/*Scrivo nei log del server*/
 	fmt.Printf("Server avviato sulla porta %s\n", port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
