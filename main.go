@@ -245,7 +245,7 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 	countryLabelsJSON, _ := json.Marshal(countryLabels)
 	countryValuesJSON, _ := json.Marshal(countryValues)
 	deviceLabelsJSON, _ := json.Marshal(deviceLabels)
-	deviceValuesJSON, _ := json.Marshal(deviceValues
+	deviceValuesJSON, _ := json.Marshal(deviceValues)
 	fmt.Fprintf(w, `
 	<script>
 	new Chart(
