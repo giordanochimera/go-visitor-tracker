@@ -177,8 +177,28 @@ func getDeviceType(userAgent string) string {
 	}
 	return "Unknown"
 }
-/*funzione per lapagina di statistiche del sito*/
+/*funzione per la pagina di statistiche del sito*/
 func adminHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "text/html")
+	fmt.Fprintln(w, `
+<html>
+<head>
+<title>Site Views</title>
+</head>
+<body>
+<h1>Site Views</h1>
+<div style="width:500px;">
+	<canvas id="countryChart"></canvas>
+</div>
+<br><br>
+<div style="width:500px;">
+	<canvas id="deviceChart"></canvas>
+</div>
+`)
+	var countryLabels []string
+	var countryValues []int
+
 	rows, err := db.Query(`
 		SELECT country, COUNT(*)
 		FROM visits
@@ -190,20 +210,18 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer rows.Close()
-	fmt.Fprintln(w, "VISITE PER PAESE")
-	fmt.Fprintln(w)
 
 	for rows.Next() {
 		var country string
 		var count int
 		rows.Scan(&country, &count)
-		fmt.Fprintf(w, "%s : %d\n", country, count)
+		countryLabels = append(countryLabels, country)
+		countryValues = append(countryValues, count)
 	}
-	fmt.Fprintln(w)
-	fmt.Fprintln(w)
-	fmt.Fprintln(w, "VISITE PER DISPOSITIVO")
-	fmt.Fprintln(w)
-	
+
+	var deviceLabels []string
+	var deviceValues []int
+
 	rows2, err := db.Query(`
 		SELECT device_type, COUNT(*)
 		FROM visits
@@ -216,11 +234,34 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows2.Close()
 	for rows2.Next() {
+
 		var device string
 		var count int
+
 		rows2.Scan(&device, &count)
-		fmt.Fprintf(w, "%s : %d\n", device, count)
+
+		deviceLabels = append(deviceLabels, device)
+		deviceValues = append(deviceValues, count)
 	}
+
+	// Debug temporaneo
+
+	fmt.Fprintln(w, "<h2>Country Labels</h2>")
+	fmt.Fprintf(w, "<pre>%v</pre>", countryLabels)
+
+	fmt.Fprintln(w, "<h2>Country Values</h2>")
+	fmt.Fprintf(w, "<pre>%v</pre>", countryValues)
+
+	fmt.Fprintln(w, "<h2>Device Labels</h2>")
+	fmt.Fprintf(w, "<pre>%v</pre>", deviceLabels)
+
+	fmt.Fprintln(w, "<h2>Device Values</h2>")
+	fmt.Fprintf(w, "<pre>%v</pre>", deviceValues)
+
+	fmt.Fprintln(w, `
+</body>
+</html>
+`)
 }
 
 func main() {
