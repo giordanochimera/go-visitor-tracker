@@ -181,22 +181,7 @@ func getDeviceType(userAgent string) string {
 func adminHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprintln(w, `
-<html>
-<head>
-<title>Site Views</title>
-<script src="https://cdn.jsdelivr.net/npmpt>
-</head>
-<body>
-<h1>Site Views</h1>
-<div style="width:500px;">
-	<canvas id="countryChart"></canvas>
-</div>
-<br><br>
-<div style="width:500px;">
-	<canvas id="deviceChart"></canvas>
-</div>
-`)
+
 	var countryLabels []string
 	var countryValues []int
 
@@ -215,7 +200,9 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var country string
 		var count int
+
 		rows.Scan(&country, &count)
+
 		countryLabels = append(countryLabels, country)
 		countryValues = append(countryValues, count)
 	}
@@ -234,55 +221,83 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer rows2.Close()
-	for rows2.Next() {
 
+	for rows2.Next() {
 		var device string
 		var count int
+
 		rows2.Scan(&device, &count)
+
 		deviceLabels = append(deviceLabels, device)
 		deviceValues = append(deviceValues, count)
 	}
+
 	countryLabelsJSON, _ := json.Marshal(countryLabels)
 	countryValuesJSON, _ := json.Marshal(countryValues)
+
 	deviceLabelsJSON, _ := json.Marshal(deviceLabels)
 	deviceValuesJSON, _ := json.Marshal(deviceValues)
+
 	fmt.Fprintf(w, `
-	<script>
-	new Chart(
-		document.getElementById('countryChart'),
-		{
-			type: 'pie',
-			data: {
-				labels: %s,
-				datasets: [{
-					data: %s
-				}]
-			}
+<html>
+<head>
+	<title>Site Views</title>
+	https://cdn.jsdelivr.net/npm/chart.jsscript>
+</head>
+<body>
+
+<h1>Site Views</h1>
+
+<div style="width:600px;">
+	<h2>Visite per Paese</h2>
+	<canvas id="countryChart"></canvas>
+</div>
+
+<br><br>
+
+<div style="width:600px;">
+	<h2>Visite per Dispositivo</h2>
+	<canvas id="deviceChart"></canvas>
+</div>
+
+<script>
+
+new Chart(
+	document.getElementById('countryChart'),
+	{
+		type: 'pie',
+		data: {
+			labels: %s,
+			datasets: [{
+				data: %s
+			}]
 		}
-	);
-	new Chart(
-		document.getElementById('deviceChart'),
-		{
-			type: 'pie',
-			data: {
-				labels: %s,
-				datasets: [{
-					data: %s
-				}]
-			}
+	}
+);
+
+new Chart(
+	document.getElementById('deviceChart'),
+	{
+		type: 'pie',
+		data: {
+			labels: %s,
+			datasets: [{
+				data: %s
+			}]
 		}
-	);
-	</script>
-	`,
+	}
+);
+
+</script>
+
+</body>
+</html>
+`,
 		string(countryLabelsJSON),
 		string(countryValuesJSON),
 		string(deviceLabelsJSON),
 		string(deviceValuesJSON),
 	)
-	fmt.Fprintln(w, `
-</body>
-</html>
-`)
 }
 
 func main() {
