@@ -239,65 +239,12 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 	deviceValuesJSON, _ := json.Marshal(deviceValues)
 
 	fmt.Fprintf(w, `
-<html>
-<head>
-	<title>Site Views</title>
-	<script src="sdelivr.net/npm/chart.jsscript>
-</head>
-<body>
-
-<h1>Site Views</h1>
-
-<div style="width:600px;">
-	<h2>Visite per Paese</h2>
-	<canvas id="countryChart"></canvas>
-</div>
-
-<br><br>
-
-<div style="width:600px;">
-	<h2>Visite per Dispositivo</h2>
-	<canvas id="deviceChart"></canvas>
-</div>
-
 <script>
 
-new Chart(
-	document.getElementById('countryChart'),
-	{
-		type: 'pie',
-		data: {
-			labels: %s,
-			datasets: [{
-				data: %s
-			}]
-		}
-	}
-);
-
-new Chart(
-	document.getElementById('deviceChart'),
-	{
-		type: 'pie',
-		data: {
-			labels: %s,
-			datasets: [{
-				data: %s
-			}]
-		}
-	}
-);
+alert("TEST");
 
 </script>
-
-</body>
-</html>
-`,
-		string(countryLabelsJSON),
-		string(countryValuesJSON),
-		string(deviceLabelsJSON),
-		string(deviceValuesJSON),
-	)
+`)
 }
 
 func main() {
