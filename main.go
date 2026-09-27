@@ -261,7 +261,15 @@ body {
 </style>
 
 </head>
-<body>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    text-align: center;
+}
+.chart-container {
+    width: 500px;
+    margin: auto;
+}
 
 <h1>Site Views</h1>
 
